@@ -97,4 +97,22 @@ public class ProductController {
 
         return ResponseEntity.ok().body(product);
     }
+
+    @DeleteMapping("/product/{id}")
+    public ResponseEntity<Void> deleteProductById(
+            @PathVariable
+            String id
+    ) {
+        // 透過 id 指定要刪除的資源，直接從 List 移除
+        boolean isRemoved = productDB.removeIf(p -> p.getId().equals(id));
+
+        // 若資源原先是存在的，就回傳狀態碼204（No Content），意思跟200一樣是請求成功，但回應主體沒有內容
+        // 若資源原先並不存在，則回傳狀態碼404。
+        if (isRemoved) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.notFound().build();
+
+    }
 }

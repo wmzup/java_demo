@@ -12,6 +12,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -113,6 +114,16 @@ public class ProductController {
         }
 
         return ResponseEntity.notFound().build();
+    }
 
+    @GetMapping("/products")
+    public ResponseEntity<List<Product>> getProducts(
+            @RequestParam(value = "keyword", defaultValue = "")
+            String keyword
+    ) {
+        List<Product> products = productDB.stream()
+                .filter(p -> p.getName().toUpperCase().contains(keyword.toUpperCase()))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok().body(products);
     }
 }

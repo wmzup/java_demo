@@ -76,4 +76,25 @@ public class ProductController {
                 .toUri();
         return ResponseEntity.created(location).body(product);
     }
+
+    @PutMapping("/product/{id}")
+    public ResponseEntity<Product> replacePlace(
+            @PathVariable("id")
+            String id,
+            @RequestBody
+            Product request) {
+        Optional<Product> productOpt = productDB.stream()
+                .filter(p -> p.getId().equals(id))
+                .findFirst();
+
+        if (!productOpt.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Product product = productOpt.get();
+        product.setName(request.getName());
+        product.setPrice(request.getPrice());
+
+        return ResponseEntity.ok().body(product);
+    }
 }

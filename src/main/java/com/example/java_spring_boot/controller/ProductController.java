@@ -1,5 +1,6 @@
 package com.example.java_spring_boot.controller;
 
+import com.example.java_spring_boot.dto.request.ProductListRequest;
 import com.example.java_spring_boot.dto.response.Product;
 import jakarta.annotation.PostConstruct;
 import org.springframework.http.HttpStatus;
@@ -9,13 +10,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/products", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ProductController {
 
     private final List<Product> productDB = new ArrayList<>();
@@ -30,7 +29,7 @@ public class ProductController {
         productDB.add(new Product("B0005", "Human Resource Management", 330));
     }
 
-    @GetMapping("/product/{id}")
+    @GetMapping("/{id}")    // @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<Product> getProduct(
             @PathVariable("id")
             String id
@@ -47,7 +46,7 @@ public class ProductController {
         }
     }
 
-    @PostMapping("/product")
+    @PostMapping    // @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Product> createProduct(
             @RequestBody
             Product request
@@ -78,7 +77,7 @@ public class ProductController {
         return ResponseEntity.created(location).body(product);
     }
 
-    @PutMapping("/product/{id}")
+    @PatchMapping("/{id}")  // @RequestMapping(value = "/{id}", method = RequestMethod.PATCH)
     public ResponseEntity<Product> replacePlace(
             @PathVariable("id")
             String id,
@@ -99,7 +98,7 @@ public class ProductController {
         return ResponseEntity.ok().body(product);
     }
 
-    @DeleteMapping("/product/{id}")
+    @DeleteMapping("/{id}") // @RequestMapping(method = RequestMethod.HEAD)
     public ResponseEntity<Void> deleteProductById(
             @PathVariable
             String id
@@ -116,14 +115,40 @@ public class ProductController {
         return ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/products")
+    @GetMapping
     public ResponseEntity<List<Product>> getProducts(
-            @RequestParam(value = "keyword", defaultValue = "")
-            String keyword
+            // 讓 Spring Boot 將查詢字串的值賦予給 ProductListRequest 物件
+            @ModelAttribute
+            ProductListRequest productListRequest
     ) {
+        String keyword  = productListRequest.getKeyword();
+        String orderBy  = productListRequest.getOrderBy();
+        String sortRule = productListRequest.getSortRule();
+        Comparator<Product> comparator = genComparator(orderBy, sortRule);
+
         List<Product> products = productDB.stream()
                 .filter(p -> p.getName().toUpperCase().contains(keyword.toUpperCase()))
+                .sorted(comparator)
                 .collect(Collectors.toList());
+
         return ResponseEntity.ok().body(products);
+    }
+
+    private Comparator<Product> genComparator(String orderBy, String sortRule) {
+        Comparator<Product> comparator = (p1, p2) -> 0;
+
+        if (Objects.isNull(orderBy) || Objects.isNull(sortRule)) {
+            return comparator;
+        }
+
+        if (orderBy.equalsIgnoreCase("price")) {
+            comparator = Comparator.comparing(Product::getPrice);
+        } else if (orderBy.equalsIgnoreCase("name")) {
+            comparator = Comparator.comparing(Product::getName);
+        }
+
+        return sortRule.equalsIgnoreCase("desc")
+                ? comparator.reversed()
+                : comparator;
     }
 }

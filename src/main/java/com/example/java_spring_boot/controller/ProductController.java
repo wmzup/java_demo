@@ -2,7 +2,9 @@ package com.example.java_spring_boot.controller;
 
 import com.example.java_spring_boot.dto.request.ProductListRequest;
 import com.example.java_spring_boot.dto.response.Product;
+import com.example.java_spring_boot.service.ProductService;
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,8 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "/products", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ProductController {
 
+    @Autowired
+    private ProductService productService;
     private final List<Product> productDB = new ArrayList<>();
 
     // @PostConstruct Controller 被建立後，自動執行該方法，新增預設的產品資料
@@ -51,19 +55,7 @@ public class ProductController {
             @RequestBody
             Product request
     ) {
-        boolean isIdDuplicated = productDB.stream()
-                .anyMatch(product -> product.getId().equals(request.getId()));
-
-        if (isIdDuplicated) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
-        }
-
-        Product product = new Product();
-        product.setId(request.getId());
-        product.setName(request.getName());
-        product.setPrice(request.getPrice());
-        productDB.add(product);
-
+        Product product = productService.createProduct(request);
         /*
          * 切換到「Headers」頁籤，這邊紀錄著「回應標頭」（response header）
          * 其中「Location」欄位值就是產品的 URI，它會指向這次新增的資源
@@ -76,7 +68,6 @@ public class ProductController {
                 .toUri();
         return ResponseEntity.created(location).body(product);
     }
-
     @PatchMapping("/{id}")  // @RequestMapping(value = "/{id}", method = RequestMethod.PATCH)
     public ResponseEntity<Product> replacePlace(
             @PathVariable("id")

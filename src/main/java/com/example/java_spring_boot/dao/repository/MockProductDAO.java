@@ -10,10 +10,8 @@ import java.util.stream.Collectors;
 
 @Repository
 public class MockProductDAO {
-
     private final List<Product> productDB = new ArrayList<>();
-
-    @PostConstruct
+    @PostConstruct  // class被建立後，自動執行該方法，新增預設的產品資料
     private void initDB() {
         productDB.add(new Product("B0001", "Android Development (Java)", 380));
         productDB.add(new Product("B0002", "Android Development (Kotlin)", 420));
@@ -38,6 +36,7 @@ public class MockProductDAO {
     }
 
     public void delete(String id) {
+        // 透過 id 指定要刪除的資源，直接從 List 移除
         productDB.removeIf(p -> p.getId().equals(id));
     }
 

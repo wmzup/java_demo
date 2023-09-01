@@ -1,28 +1,21 @@
 package com.example.java_spring_boot.service;
 
-import com.example.java_spring_boot.dao.repository.MockProductDAO;
+import com.example.java_spring_boot.dto.request.ProductListRequest;
 import com.example.java_spring_boot.dto.response.Product;
-import com.example.java_spring_boot.util.exception.UnprocessableEntityException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
-public class ProductService {
+public interface ProductService {
 
-    @Autowired
-    MockProductDAO productDAO;
+    Product getProduct(String id);
 
-    public Product createProduct(Product request) {
-        boolean isIdDuplicated = productDAO.find(request.getId()).isPresent();
-        if (isIdDuplicated) {
-            throw new UnprocessableEntityException("The id of the product is duplicated.");
-        }
+    Product createProduct(Product request);
 
-        Product product = new Product();
-        product.setId(request.getId());
-        product.setName(request.getName());
-        product.setPrice(request.getPrice());
+    Product updateProduct(String id, Product request);
 
-        return productDAO.insert(product);
-    }
+    void deleteProductById(String id);
+
+    List<Product> getProducts(ProductListRequest request);
 }

@@ -5,7 +5,6 @@ import com.example.java_spring_boot.dto.response.Product;
 import com.example.java_spring_boot.service.ProductService;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,40 +20,15 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
-    private final List<Product> productDB = new ArrayList<>();
-
-    // @PostConstruct Controller 被建立後，自動執行該方法，新增預設的產品資料
-    @PostConstruct
-    private void initDB() {
-        productDB.add(new Product("B0001", "Android Development (Java)", 380));
-        productDB.add(new Product("B0002", "Android Development (Kotlin)", 420));
-        productDB.add(new Product("B0003", "Data Structure (Java)", 250));
-        productDB.add(new Product("B0004", "Finance Management", 450));
-        productDB.add(new Product("B0005", "Human Resource Management", 330));
-    }
 
     @GetMapping("/{id}")    // @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Product> getProduct(
-            @PathVariable("id")
-            String id
-    ) {
-        Optional<Product> productOpt = productDB.stream()
-                .filter(product -> product.getId().equals(id))
-                .findFirst();
-
-        if (productOpt.isPresent()) {
-            Product product = productOpt.get();
-            return ResponseEntity.ok().body(product);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Product> getProduct(@PathVariable("id") String id) {
+        Product product = productService.getProduct(id);
+        return ResponseEntity.ok(product);
     }
 
     @PostMapping    // @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Product> createProduct(
-            @RequestBody
-            Product request
-    ) {
+    public ResponseEntity<Product> createProduct(@RequestBody Product request) {
         Product product = productService.createProduct(request);
         /*
          * 切換到「Headers」頁籤，這邊紀錄著「回應標頭」（response header）
@@ -69,24 +43,13 @@ public class ProductController {
         return ResponseEntity.created(location).body(product);
     }
     @PatchMapping("/{id}")  // @RequestMapping(value = "/{id}", method = RequestMethod.PATCH)
-    public ResponseEntity<Product> replacePlace(
+    public ResponseEntity<Product> updateProduct(
             @PathVariable("id")
             String id,
             @RequestBody
             Product request) {
-        Optional<Product> productOpt = productDB.stream()
-                .filter(p -> p.getId().equals(id))
-                .findFirst();
-
-        if (!productOpt.isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Product product = productOpt.get();
-        product.setName(request.getName());
-        product.setPrice(request.getPrice());
-
-        return ResponseEntity.ok().body(product);
+        Product product = productService.updateProduct(id, request);
+        return ResponseEntity.ok(product);
     }
 
     @DeleteMapping("/{id}") // @RequestMapping(method = RequestMethod.HEAD)
@@ -94,52 +57,21 @@ public class ProductController {
             @PathVariable
             String id
     ) {
-        // 透過 id 指定要刪除的資源，直接從 List 移除
-        boolean isRemoved = productDB.removeIf(p -> p.getId().equals(id));
-
+        productService.deleteProductById(id);
         // 若資源原先是存在的，就回傳狀態碼204（No Content），意思跟200一樣是請求成功，但回應主體沒有內容
         // 若資源原先並不存在，則回傳狀態碼404。
-        if (isRemoved) {
-            return ResponseEntity.noContent().build();
-        }
-
+        // if (isRemoved) {
+        //  return ResponseEntity.noContent().build();
+        // }
         return ResponseEntity.notFound().build();
     }
 
     @GetMapping
     public ResponseEntity<List<Product>> getProducts(
-            // 讓 Spring Boot 將查詢字串的值賦予給 ProductListRequest 物件
-            @ModelAttribute
+            @ModelAttribute // 讓 Spring Boot 將查詢字串的值賦予給 ProductListRequest 物件
             ProductListRequest productListRequest
     ) {
-        String keyword  = productListRequest.getKeyword();
-        String orderBy  = productListRequest.getOrderBy();
-        String sortRule = productListRequest.getSortRule();
-        Comparator<Product> comparator = genComparator(orderBy, sortRule);
-
-        List<Product> products = productDB.stream()
-                .filter(p -> p.getName().toUpperCase().contains(keyword.toUpperCase()))
-                .sorted(comparator)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok().body(products);
-    }
-
-    private Comparator<Product> genComparator(String orderBy, String sortRule) {
-        Comparator<Product> comparator = (p1, p2) -> 0;
-
-        if (Objects.isNull(orderBy) || Objects.isNull(sortRule)) {
-            return comparator;
-        }
-
-        if (orderBy.equalsIgnoreCase("price")) {
-            comparator = Comparator.comparing(Product::getPrice);
-        } else if (orderBy.equalsIgnoreCase("name")) {
-            comparator = Comparator.comparing(Product::getName);
-        }
-
-        return sortRule.equalsIgnoreCase("desc")
-                ? comparator.reversed()
-                : comparator;
+        List<Product> products = productService.getProducts(productListRequest);
+        return ResponseEntity.ok(products);
     }
 }

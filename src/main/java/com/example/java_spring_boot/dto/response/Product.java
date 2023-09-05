@@ -1,8 +1,10 @@
 package com.example.java_spring_boot.dto.response;
 
 import lombok.Data;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
+@Document(collection = "products")
 public class Product {
     private String id;
     private String name;

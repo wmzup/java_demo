@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ProductListRequest {
     private String keyword;
+    private Integer priceFrom;
+    private Integer priceTo;
     private String orderBy;
     private String sortRule;
 }

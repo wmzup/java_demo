@@ -1,9 +1,10 @@
 package com.example.java_spring_boot.controller;
 
 import com.example.java_spring_boot.dto.request.ProductListRequest;
+import com.example.java_spring_boot.dto.request.ProductRequest;
 import com.example.java_spring_boot.dto.response.Product;
 import com.example.java_spring_boot.service.ProductService;
-import jakarta.annotation.PostConstruct;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +13,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/products", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -28,7 +28,9 @@ public class ProductController {
     }
 
     @PostMapping    // @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Product> createProduct(@RequestBody Product request) {
+    public ResponseEntity<Product> createProduct(
+            @RequestBody @Valid ProductRequest request
+    ) {
         Product product = productService.createProduct(request);
         /*
          * 切換到「Headers」頁籤，這邊紀錄著「回應標頭」（response header）
@@ -47,7 +49,8 @@ public class ProductController {
             @PathVariable("id")
             String id,
             @RequestBody
-            Product request) {
+            @Valid
+            ProductRequest request) {
         Product product = productService.updateProduct(id, request);
         return ResponseEntity.ok(product);
     }

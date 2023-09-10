@@ -1,7 +1,9 @@
 package com.example.java_spring_boot.service;
 
 import com.example.java_spring_boot.dto.request.ProductListRequest;
+import com.example.java_spring_boot.dto.request.ProductRequest;
 import com.example.java_spring_boot.dto.response.Product;
+import com.example.java_spring_boot.dto.response.ProductResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,13 +11,13 @@ import java.util.List;
 @Service
 public interface ProductService {
 
-    Product getProduct(String id);
+    ProductResponse getProduct(String id);
 
-    Product createProduct(Product request);
+    ProductResponse createProduct(ProductRequest request);
 
-    Product updateProduct(String id, Product request);
+    ProductResponse updateProduct(String id, ProductRequest request);
 
     void deleteProductById(String id);
 
-    List<Product> getProducts(ProductListRequest request);
+    List<ProductResponse> getProducts(ProductListRequest request);
 }

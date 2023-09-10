@@ -1,9 +1,11 @@
 package com.example.java_spring_boot.controller;
 
 import com.example.java_spring_boot.dto.request.ProductListRequest;
+import com.example.java_spring_boot.dto.request.ProductRequest;
 import com.example.java_spring_boot.dto.response.Product;
+import com.example.java_spring_boot.dto.response.ProductResponse;
 import com.example.java_spring_boot.service.ProductService;
-import jakarta.annotation.PostConstruct;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +14,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/products", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -22,14 +23,16 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping("/{id}")    // @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Product> getProduct(@PathVariable("id") String id) {
-        Product product = productService.getProduct(id);
-        return ResponseEntity.ok(product);
+    public ResponseEntity<ProductResponse> getProduct(@PathVariable("id") String id) {
+        ProductResponse response = productService.getProduct(id);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping    // @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Product> createProduct(@RequestBody Product request) {
-        Product product = productService.createProduct(request);
+    public ResponseEntity<ProductResponse> createProduct(
+            @RequestBody @Valid ProductRequest request
+    ) {
+        ProductResponse product = productService.createProduct(request);
         /*
          * 切換到「Headers」頁籤，這邊紀錄著「回應標頭」（response header）
          * 其中「Location」欄位值就是產品的 URI，它會指向這次新增的資源
@@ -43,12 +46,13 @@ public class ProductController {
         return ResponseEntity.created(location).body(product);
     }
     @PatchMapping("/{id}")  // @RequestMapping(value = "/{id}", method = RequestMethod.PATCH)
-    public ResponseEntity<Product> updateProduct(
+    public ResponseEntity<ProductResponse> updateProduct(
             @PathVariable("id")
             String id,
             @RequestBody
-            Product request) {
-        Product product = productService.updateProduct(id, request);
+            @Valid
+            ProductRequest request) {
+        ProductResponse product = productService.updateProduct(id, request);
         return ResponseEntity.ok(product);
     }
 
@@ -59,7 +63,7 @@ public class ProductController {
     ) {
         productService.deleteProductById(id);
         // 若資源原先是存在的，就回傳狀態碼204（No Content），意思跟200一樣是請求成功，但回應主體沒有內容
-        // 若資源原先並不存在，則回傳狀態碼404。
+        // 若資源原先並不存在，則回傳狀態碼404
         // if (isRemoved) {
         //  return ResponseEntity.noContent().build();
         // }
@@ -67,11 +71,11 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Product>> getProducts(
+    public ResponseEntity<List<ProductResponse>> getProducts(
             @ModelAttribute // 讓 Spring Boot 將查詢字串的值賦予給 ProductListRequest 物件
             ProductListRequest productListRequest
     ) {
-        List<Product> products = productService.getProducts(productListRequest);
+        List<ProductResponse> products = productService.getProducts(productListRequest);
         return ResponseEntity.ok(products);
     }
 }

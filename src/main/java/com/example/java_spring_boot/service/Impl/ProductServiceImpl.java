@@ -1,12 +1,13 @@
 package com.example.java_spring_boot.service.Impl;
 
+import com.example.java_spring_boot.converter.ProductConverter;
 import com.example.java_spring_boot.dao.repository.MockProductDAO;
 import com.example.java_spring_boot.dao.repository.ProductRepository;
 import com.example.java_spring_boot.dto.request.ProductListRequest;
+import com.example.java_spring_boot.dto.request.ProductRequest;
 import com.example.java_spring_boot.dto.response.Product;
 import com.example.java_spring_boot.service.ProductService;
 import com.example.java_spring_boot.util.exception.NotFoundException;
-import com.example.java_spring_boot.util.exception.UnprocessableEntityException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -31,26 +32,17 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product createProduct(Product request) {
-
-        Product product = new Product();
-        product.setName(request.getName());
-        product.setPrice(request.getPrice());
-
+    public Product createProduct(ProductRequest request) {
+        Product product = ProductConverter.toProduct(request);
         return productRepository.insert(product);
     }
 
     @Override
-    public Product updateProduct(String id, Product request) {
-
+    public Product updateProduct(String id, ProductRequest request) {
         Product oldProduct = getProduct(id);
-
-        Product product = new Product();
-        product.setId(oldProduct.getId());
-        product.setName(request.getName());
-        product.setPrice(request.getPrice());
-
-        return productRepository.save(product);
+        Product newProduct = ProductConverter.toProduct(request);
+        newProduct.setId(oldProduct.getId());
+        return productRepository.save(newProduct);
     }
 
     @Override

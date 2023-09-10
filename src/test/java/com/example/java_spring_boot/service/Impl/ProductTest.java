@@ -3,7 +3,6 @@ package com.example.java_spring_boot.service.Impl;
 import com.example.java_spring_boot.dao.repository.ProductRepository;
 import com.example.java_spring_boot.dto.response.Product;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
@@ -13,7 +12,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -175,6 +173,33 @@ public class ProductTest {
         Assertions.assertEquals(HttpStatus.OK.value(), mockHttpResponse.getStatus());
         Assertions.assertEquals(MediaType.APPLICATION_JSON_VALUE,
                 mockHttpResponse.getHeader(HttpHeaders.CONTENT_TYPE));
+    }
+
+    @Test
+    public void get400WhenCreateProductWithEmptyName() throws Exception {
+        JSONObject request = new JSONObject()
+                .put("name", "")
+                .put("price", 350);
+
+        mockMvc.perform(post("/products")
+                        .headers(httpHeaders)
+                        .content(request.toString()))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void get400WhenUpdateProductWithNegativePrice() throws Exception {
+        Product product = createProduct("Computer Science", 350);
+        productRepository.insert(product);
+
+        JSONObject request = new JSONObject()
+                .put("name", "Computer Science")
+                .put("price", -100);
+
+        mockMvc.perform(put("/products" + product.getId())
+                .headers(httpHeaders)
+                .content(request.toString()))
+                .andExpect(status().isBadRequest());
     }
 
     @After

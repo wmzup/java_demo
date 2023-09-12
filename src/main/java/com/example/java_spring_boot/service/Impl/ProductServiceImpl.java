@@ -6,6 +6,7 @@ import com.example.java_spring_boot.dao.repository.ProductRepository;
 import com.example.java_spring_boot.dto.request.ProductListRequest;
 import com.example.java_spring_boot.dto.request.ProductRequest;
 import com.example.java_spring_boot.dto.response.Product;
+import com.example.java_spring_boot.dto.response.ProductResponse;
 import com.example.java_spring_boot.service.ProductService;
 import com.example.java_spring_boot.util.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,20 +27,22 @@ public class ProductServiceImpl implements ProductService {
     ProductRepository productRepository;
 
     @Override
-    public Product getProduct(String id) {
-        return productRepository.findById(id)
+    public ProductResponse getProduct(String id) {
+        Product product = productRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Can't find product."));
+        return ProductConverter.toProductResponse(product);
+
     }
 
     @Override
-    public Product createProduct(ProductRequest request) {
+    public ProductResponse createProduct(ProductRequest request) {
         Product product = ProductConverter.toProduct(request);
         return productRepository.insert(product);
     }
 
     @Override
     public Product updateProduct(String id, ProductRequest request) {
-        Product oldProduct = getProduct(id);
+        Product oldProduct = ProductConverter.toProduct(request);
         Product newProduct = ProductConverter.toProduct(request);
         newProduct.setId(oldProduct.getId());
         return productRepository.save(newProduct);

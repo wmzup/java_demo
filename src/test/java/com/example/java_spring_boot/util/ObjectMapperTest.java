@@ -1,5 +1,6 @@
 package com.example.java_spring_boot.util;
 
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import org.json.JSONObject;
@@ -33,9 +34,9 @@ public class ObjectMapperTest {
 
         Assert.assertEquals(book.getId(), bookJSON.getString("id"));
         Assert.assertEquals(book.getName(), bookJSON.getString("name"));
-        Assert.assertEquals(book.getPrice(), bookJSON.getString("price"));
+        Assert.assertEquals(book.getPrice(), bookJSON.getInt("price"));
         Assert.assertEquals(book.getIsbn(), bookJSON.getString("isbn"));
-        Assert.assertEquals(book.getCreatedTime(), bookJSON.getLong("createdTime"));
+        Assert.assertEquals(book.getCreatedTime().getTime(), bookJSON.getLong("createdTime"));
     }
 
     @Test
@@ -54,12 +55,16 @@ public class ObjectMapperTest {
     }
 
     @Data
+    @JsonInclude(JsonInclude.Include.NON_NULL) // 傳入特定參數，可在序列化時納入符合條件的欄位
     private static class Book {
         private String id;
-        private  String name;
+        private String name;
         private int price;
+        @JsonIgnore // 序列化時忽略
         private String isbn;
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
         private Date createdTime;
+        @JsonUnwrapped // 序列化時展開
         private Publisher publisher;
     }
 
@@ -67,6 +72,7 @@ public class ObjectMapperTest {
     private static class Publisher {
         private String companyName;
         private String address;
+        @JsonProperty("telephone") // 調整欄位名稱
         private String tel;
     }
 }

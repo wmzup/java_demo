@@ -3,6 +3,7 @@ package com.example.java_spring_boot.controller;
 import com.example.java_spring_boot.dto.request.ProductListRequest;
 import com.example.java_spring_boot.dto.request.ProductRequest;
 import com.example.java_spring_boot.dto.response.Product;
+import com.example.java_spring_boot.dto.response.ProductResponse;
 import com.example.java_spring_boot.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,16 +23,16 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping("/{id}")    // @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Product> getProduct(@PathVariable("id") String id) {
-        Product product = productService.getProduct(id);
-        return ResponseEntity.ok(product);
+    public ResponseEntity<ProductResponse> getProduct(@PathVariable("id") String id) {
+        ProductResponse response = productService.getProduct(id);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping    // @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Product> createProduct(
+    public ResponseEntity<ProductResponse> createProduct(
             @RequestBody @Valid ProductRequest request
     ) {
-        Product product = productService.createProduct(request);
+        ProductResponse product = productService.createProduct(request);
         /*
          * 切換到「Headers」頁籤，這邊紀錄著「回應標頭」（response header）
          * 其中「Location」欄位值就是產品的 URI，它會指向這次新增的資源

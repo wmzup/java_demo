@@ -6,6 +6,7 @@ import com.example.java_spring_boot.dao.repository.ProductRepository;
 import com.example.java_spring_boot.dto.request.ProductListRequest;
 import com.example.java_spring_boot.dto.request.ProductRequest;
 import com.example.java_spring_boot.dto.response.Product;
+import com.example.java_spring_boot.dto.response.ProductResponse;
 import com.example.java_spring_boot.service.ProductService;
 import com.example.java_spring_boot.util.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,23 +27,27 @@ public class ProductServiceImpl implements ProductService {
     ProductRepository productRepository;
 
     @Override
-    public Product getProduct(String id) {
-        return productRepository.findById(id)
+    public ProductResponse getProduct(String id) {
+        Product product = productRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Can't find product."));
+        return ProductConverter.toProductResponse(product);
+
     }
 
     @Override
-    public Product createProduct(ProductRequest request) {
+    public ProductResponse createProduct(ProductRequest request) {
         Product product = ProductConverter.toProduct(request);
-        return productRepository.insert(product);
+        Product newProduct = productRepository.insert(product);
+        return ProductConverter.toProductResponse(newProduct);
     }
 
     @Override
-    public Product updateProduct(String id, ProductRequest request) {
-        Product oldProduct = getProduct(id);
+    public ProductResponse updateProduct(String id, ProductRequest request) {
+        Product oldProduct = ProductConverter.toProduct(request);
         Product newProduct = ProductConverter.toProduct(request);
         newProduct.setId(oldProduct.getId());
-        return productRepository.save(newProduct);
+        Product product = productRepository.save(newProduct);
+        return ProductConverter.toProductResponse(product);
     }
 
     @Override
@@ -51,13 +56,18 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getProducts(ProductListRequest request) {
+    public List<ProductResponse> getProducts(ProductListRequest request) {
 
         String keyword = Optional.ofNullable(request.getKeyword()).orElse("");
         int priceFrom = Optional.ofNullable(request.getPriceFrom()).orElse(0);
         int priceTo = Optional.ofNullable(request.getPriceTo()).orElse(Integer.MAX_VALUE);
         Sort sort = genSortingStrategy(request.getOrderBy(), request.getSortRule());
-        return productRepository.findByPriceBetweenAndNameLikeIgnoreCase(priceFrom, priceTo, keyword, sort);
+
+        List<Product> products = productRepository.findByPriceBetweenAndNameLikeIgnoreCase(priceFrom, priceTo, keyword, sort);
+
+        return products.stream()
+                .map(ProductConverter::toProductResponse)
+                .toList();
     }
 
     private Sort genSortingStrategy(String orderBy, String sortRule) {

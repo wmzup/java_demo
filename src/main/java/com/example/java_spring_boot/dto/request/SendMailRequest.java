@@ -12,5 +12,5 @@ public class SendMailRequest {
     private String content;
 
     @NotEmpty
-    private String[] receivers;
+    private String receivers;
 }

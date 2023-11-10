@@ -9,29 +9,26 @@ import com.example.java_spring_boot.dto.response.Product;
 import com.example.java_spring_boot.dto.response.ProductResponse;
 import com.example.java_spring_boot.service.ProductService;
 import com.example.java_spring_boot.util.exception.NotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-@Service
 public class ProductServiceImpl implements ProductService {
+    private MockProductDAO productDAO;
+    private ProductRepository productRepository;
 
-    @Autowired // Spring Boot 啟動時便會給該變數傳入物件，這個特性稱為「 依賴注入」（dependency injection）
-    MockProductDAO productDAO;
-
-    @Autowired
-    ProductRepository productRepository;
+    public ProductServiceImpl(ProductRepository productRepository, MockProductDAO productDAO) {
+        this.productRepository = productRepository;
+        this.productDAO = productDAO;
+    }
 
     @Override
     public ProductResponse getProduct(String id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Can't find product."));
         return ProductConverter.toProductResponse(product);
-
     }
 
     @Override

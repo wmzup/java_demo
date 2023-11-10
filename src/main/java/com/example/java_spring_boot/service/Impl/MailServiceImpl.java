@@ -1,45 +1,31 @@
 package com.example.java_spring_boot.service.Impl;
 
-import com.example.java_spring_boot.config.MailConfig;
 import com.example.java_spring_boot.dto.request.SendMailRequest;
 import com.example.java_spring_boot.service.MailService;
-import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailAuthenticationException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.stereotype.Service;
 
-import java.util.Properties;
-
-@Service
 public class MailServiceImpl implements MailService {
 
-    @Autowired
-    private MailConfig mailConfig;
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
-    private JavaMailSenderImpl mailSender;
+    private final JavaMailSenderImpl mailSender;
 
-    @PostConstruct
-    public void init() {
-        mailSender = new JavaMailSenderImpl();
-        mailSender.setHost(mailConfig.getHost());
-        mailSender.setPort(mailConfig.getPort());
-        mailSender.setUsername(mailConfig.getUsername());
-        mailSender.setPassword(mailConfig.getPassword());
-
-        Properties properties = mailSender.getJavaMailProperties();
-        properties.put("mail.smtp.auth", mailConfig.isAuthEnabled());
-        properties.put("mail.smtp.starttls.enable", mailConfig.isStarttlsEnabled());
-        properties.put("mail.transport.protocol", mailConfig.getProtocol());
+    // 這裡原本注入時會出現：Could not autowire. No beans of 'JavaMailSenderImpl' type found
+    // 原以為是因為配置問題，但功能其實是可以使用的
+    // 既然不影響運行，就降低Autowired檢測的級別。將Severity的級別由error改成warning或其他可以忽略的級別
+    // 參考：https://www.cnblogs.com/spring-ioc/p/16100568.html
+    public MailServiceImpl(JavaMailSenderImpl mailSender) {
+        this.mailSender = mailSender;
     }
 
     @Override
     public void sendMail(SendMailRequest request) {
+        // 實測結果只有outlook會寄信，gmail跟yahoo都沒做事，但也沒噴error。需另外找時間爬文
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(mailConfig.getUsername());
+        message.setFrom(mailSender.getUsername());
         message.setTo(request.getReceivers());
         message.setSubject(request.getSubject());
         message.setText(request.getContent());

@@ -7,6 +7,7 @@ import com.example.java_spring_boot.dto.request.ProductListRequest;
 import com.example.java_spring_boot.dto.request.ProductRequest;
 import com.example.java_spring_boot.dto.response.Product;
 import com.example.java_spring_boot.dto.response.ProductResponse;
+import com.example.java_spring_boot.service.MailService;
 import com.example.java_spring_boot.service.ProductService;
 import com.example.java_spring_boot.util.exception.NotFoundException;
 import org.springframework.data.domain.Sort;
@@ -18,10 +19,12 @@ import java.util.Optional;
 public class ProductServiceImpl implements ProductService {
     private MockProductDAO productDAO;
     private ProductRepository productRepository;
+    private MailService mailService;
 
-    public ProductServiceImpl(ProductRepository productRepository, MockProductDAO productDAO) {
+    public ProductServiceImpl(ProductRepository productRepository, MockProductDAO productDAO, MailService mailService) {
         this.productRepository = productRepository;
         this.productDAO = productDAO;
+        this.mailService = mailService;
     }
 
     @Override
@@ -35,6 +38,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductResponse createProduct(ProductRequest request) {
         Product product = ProductConverter.toProduct(request);
         Product newProduct = productRepository.insert(product);
+        mailService.sendNewProductMail(newProduct.getId());
         return ProductConverter.toProductResponse(newProduct);
     }
 
@@ -50,6 +54,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void deleteProductById(String id) {
         productRepository.deleteById(id);
+        mailService.sendDeleteProductMail(id);
     }
 
     @Override

@@ -24,8 +24,10 @@ public class ProductController {
 
     @GetMapping("/{id}")    // @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<ProductResponse> getProduct(@PathVariable("id") String id) {
-        ProductResponse response = productService.getProduct(id);
-        return ResponseEntity.ok(response);
+        ProductResponse product = productService.getProduct(id); // 呼叫第一次
+        product = productService.getProduct(id); // 呼叫第二次
+        product = productService.getProduct(id); // 呼叫第三次
+        return ResponseEntity.ok(product);
     }
 
     @PostMapping    // @RequestMapping(method = RequestMethod.POST)

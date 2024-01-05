@@ -52,7 +52,7 @@ public class MailConfig {
     private String yahooPassword;
 
     @Bean
-    @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     public MailServiceImpl mailService() {
         JavaMailSenderImpl mailSender = null;
 

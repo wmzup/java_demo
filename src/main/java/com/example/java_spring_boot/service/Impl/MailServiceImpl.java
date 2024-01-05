@@ -44,12 +44,14 @@ public class MailServiceImpl implements MailService {
         // Collections.singletonList: 返回不可變的集合，但這長度的集合只有1，可以減少內存。但返回的值依然是Collection的內部實現類
         // 同樣沒有add()，調用add()或set()會報錯
         String content = String.format("There's a new create product (%s).", productId);
+        LOGGER.info("content: {}, LOG_EMAIL: {}", content, LOG_EMAIL);
         sendMail("New Product", content, Collections.singletonList(LOG_EMAIL));
     }
 
     @Override
     public void sendDeleteProductMail(String productId) {
         String content = String.format("There's a product deleted (%s).", productId);
+        LOGGER.info("content: {}, LOG_EMAIL: {}", content, LOG_EMAIL);
         sendMail("Product Deleted", content, Collections.singletonList(LOG_EMAIL));
     }
 

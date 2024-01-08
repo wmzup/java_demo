@@ -20,14 +20,14 @@ public class FilterConfig {
         return bean;
     }
 
-//    @Bean
-//    public FilterRegistrationBean logProcessTimeFilter() {
-//        FilterRegistrationBean<LogProcessTimeFilter> bean = new FilterRegistrationBean<>();
-//        bean.setFilter(new LogProcessTimeFilter());
-//        bean.addUrlPatterns("/*");
-//        bean.setName("logProcessTimeFilter");
-//        bean.setOrder(1);
-//
-//        return bean;
-//    }
+    @Bean
+    public FilterRegistrationBean logProcessTimeFilter() {
+        FilterRegistrationBean<LogProcessTimeFilter> bean = new FilterRegistrationBean<>();
+        bean.setFilter(new LogProcessTimeFilter());
+        bean.addUrlPatterns("/*");
+        bean.setName("logProcessTimeFilter");
+        bean.setOrder(1);
+
+        return bean;
+    }
 }

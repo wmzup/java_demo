@@ -2,12 +2,14 @@ package com.example.java_spring_boot.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+@WebFilter(urlPatterns = "/*", filterName = "logProcessTimeFilter")
 public class LogProcessTimeFilter extends OncePerRequestFilter {
 
     @Override

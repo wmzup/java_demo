@@ -2,7 +2,6 @@ package com.example.java_spring_boot.controller;
 
 import com.example.java_spring_boot.dto.request.ProductListRequest;
 import com.example.java_spring_boot.dto.request.ProductRequest;
-import com.example.java_spring_boot.dto.response.Product;
 import com.example.java_spring_boot.dto.response.ProductResponse;
 import com.example.java_spring_boot.service.ProductService;
 import jakarta.validation.Valid;

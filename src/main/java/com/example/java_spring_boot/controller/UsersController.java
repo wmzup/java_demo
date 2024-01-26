@@ -5,6 +5,7 @@ import com.example.java_spring_boot.dto.response.UserResponse;
 import com.example.java_spring_boot.service.UsersService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +17,7 @@ public class UsersController {
 
     private final UsersService usersService;
 
-    @PostMapping("/users")
+    @PostMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> createUser(
             @RequestBody
             @Valid
@@ -26,13 +27,13 @@ public class UsersController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/users")
+    @GetMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<UserResponse>> getAllUsers() {
         List<UserResponse> usersList = usersService.getAllUsers();
         return ResponseEntity.ok(usersList);
     }
 
-    @GetMapping("/users/{id}")
+    @GetMapping(value = "/users/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserResponse> getUser(
             @PathVariable
             String id

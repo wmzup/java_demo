@@ -1,5 +1,6 @@
 package com.example.java_spring_boot.dao.entity;
 
+import com.example.java_spring_boot.enums.UserAuthorityEnum;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -13,5 +14,5 @@ public class UsersEntity {
     private String id;
     private String email;
     private String password;
-    private String authority;
+    private UserAuthorityEnum authority;
 }

@@ -1,6 +1,6 @@
 package com.example.java_spring_boot.dto.request;
 
-import com.example.java_spring_boot.enums.UserAuthority;
+import com.example.java_spring_boot.enums.UserAuthorityEnum;
 import jakarta.validation.constraints.NotNull;
 
 public record UserCreateRequest(
@@ -11,6 +11,6 @@ public record UserCreateRequest(
         String passwrod,
 
         @NotNull
-        UserAuthority authority
+        UserAuthorityEnum authority
 ) {
 }

@@ -6,10 +6,8 @@ import jakarta.validation.constraints.NotNull;
 public record UserCreateRequest(
         @NotNull
         String email,
-
         @NotNull
-        String passwrod,
-
+        String password,
         @NotNull
         UserAuthorityEnum authority
 ) {

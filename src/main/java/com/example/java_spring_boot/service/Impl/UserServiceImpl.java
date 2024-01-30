@@ -7,6 +7,7 @@ import com.example.java_spring_boot.dto.request.UserCreateRequest;
 import com.example.java_spring_boot.dto.response.UserResponse;
 import com.example.java_spring_boot.service.UsersService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,10 +19,13 @@ import java.util.Optional;
 public class UserServiceImpl implements UsersService {
 
     private final UsersRepository usersRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void createUser(UserCreateRequest request) {
         UsersEntity entity = UsersConverter.toEntity(request);
+        String encodePwd = passwordEncoder.encode(entity.getPassword());
+        entity.setPassword(encodePwd);
         usersRepository.insert(entity);
     }
 

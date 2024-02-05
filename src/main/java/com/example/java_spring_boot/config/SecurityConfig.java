@@ -20,6 +20,8 @@ public class SecurityConfig {
         http.authorizeHttpRequests(registry ->
                 registry.requestMatchers(HttpMethod.GET, "/users/?*").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                        .requestMatchers(HttpMethod.PATCH, "/users/?*").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/users/?*").permitAll()
                         .anyRequest()
                         .authenticated()
         )

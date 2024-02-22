@@ -23,7 +23,6 @@ public class UserServiceImpl implements UsersService {
 
     @Override
     public void createUser(UserRequest request) {
-        // todo: check user is exist?
         UsersEntity entity = UsersConverter.toEntity(request);
         String encodePwd = passwordEncoder.encode(entity.getPassword());
         entity.setPassword(encodePwd);

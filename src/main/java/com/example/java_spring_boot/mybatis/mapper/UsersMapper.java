@@ -33,12 +33,22 @@ public interface UsersMapper {
     })
     UsersEntity findById(String id);
 
+    @Select("SELECT * FROM users WHERE email = #{email}")
+    @Results({
+            @Result(property = "id", column = "id"),
+            @Result(property = "email", column = "email"),
+            @Result(property = "password", column = "password"),
+            @Result(property = "authority", column = "authority", javaType = UserAuthorityEnum.class)
+    })
+    UsersEntity findByEmail(String useremail);
+
     // insert, update, delete語句是不需要返回值的，它們都是默認返回一個int
     @Insert("""
             INSERT INTO users (email, password, authority, create_by, create_dt)
             VALUES (#{email}, #{password}, #{authority}, #{createBy}, #{createDt})
             """)
     int insert(UsersEntity users);
+
     @Update("""
             UPDATE users
             SET email = #{email}, password = #{password}, authority = #{authority}, last_modified_by = #{lastModifiedBy}, last_modified_dt = #{lastModifiedDt}

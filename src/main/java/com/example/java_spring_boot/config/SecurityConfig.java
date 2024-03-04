@@ -29,10 +29,10 @@ public class SecurityConfig {
             registry.requestMatchers(HttpMethod.POST, "/users").permitAll()
                     .requestMatchers(HttpMethod.GET, "/users/?*").hasAnyAuthority("ADMIN", "NORMAL")
                     .requestMatchers(HttpMethod.GET, "/users").hasAuthority("ADMIN")
+                    .requestMatchers(HttpMethod.POST, "/login").permitAll()
                     .anyRequest()
                     .authenticated())
-        .csrf(AbstractHttpConfigurer::disable)
-        .formLogin();
+        .csrf(AbstractHttpConfigurer::disable);
         return http.build();
     }
 
@@ -42,10 +42,10 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider() {
+    public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService, BCryptPasswordEncoder passwordEncoder) {
         var provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService);
-        provider.setPasswordEncoder(passwordEncoder());
+        provider.setPasswordEncoder(passwordEncoder);
         return provider;
     }
 }

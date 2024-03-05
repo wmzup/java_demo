@@ -1,5 +1,9 @@
 package com.example.java_spring_boot.config;
 
+import com.example.java_spring_boot.service.LoginServiceImpl;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -10,7 +14,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -37,7 +40,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -47,5 +50,16 @@ public class SecurityConfig {
         provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder);
         return provider;
+    }
+
+    @Bean
+    public LoginServiceImpl loginServiceImpl(
+            @Value("${security.jwt.key}") String key,
+            @Value("${security.access-token-ttl-seconds}") int accessTokenTtlSeconds,
+            AuthenticationProvider authenticationProvider) {
+        // key的字串要夠長，不然在製作密鑰時會出現錯誤訊息：The specified key byte array is 240 bits which is not secure enough for any JWT HMAC-SHA algorithm.
+        var jwtSecretKey = Keys.hmacShaKeyFor(key.getBytes());
+        var jwtParser = Jwts.parserBuilder().setSigningKey(jwtSecretKey).build();
+        return new LoginServiceImpl(jwtSecretKey, accessTokenTtlSeconds, jwtParser, authenticationProvider);
     }
 }

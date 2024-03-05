@@ -5,43 +5,51 @@ import com.example.java_spring_boot.dto.response.LoginResponse;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.time.Instant;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
-@RequiredArgsConstructor
 public class LoginServiceImpl implements LoginService {
+    private final Key secretKey;
+    private final int accessTokenTtlSeconds;
+    private final JwtParser jwtParser;
+    private final AuthenticationProvider authenticationProvider;
 
-    private Key secretKey;
-    private JwtParser jwtParser;
-
-    @PostConstruct
-    private void init() {
-        String key = "AmandaRunningSpringBootLearner";
-        secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-
+    public LoginServiceImpl(Key secretKey, int accessTokenTtlSeconds, JwtParser jwtParser, AuthenticationProvider authenticationProvider) {
+        this.secretKey = secretKey;
+        this.accessTokenTtlSeconds = accessTokenTtlSeconds;
+        this.jwtParser = jwtParser;
+        this.authenticationProvider = authenticationProvider;
     }
 
     @Override
     public LoginResponse createToken(LoginRequest request) {
-        String accessToken = createAccessToken(request.getUsername());
+        // 封裝帳密
+        Authentication authToken = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
+        // 執行帳密認證
+        authToken = authenticationProvider.authenticate(authToken);
+        // 認證成功後取得結果
+        UserDetails userDetails = (UserDetails) authToken.getDetails();
+        // 產生token
+        String accessToken = createAccessToken(userDetails.getUsername());
         LoginResponse response = new LoginResponse();
         response.setAccessToken(accessToken);
         return response;
     }
 
     public String createAccessToken(String username) {
-
         // 有效時間
         long expirationMillis = Instant.now()
-                .plusSeconds(90)
+                .plusSeconds(accessTokenTtlSeconds)
                 .getEpochSecond() * 1000;
 
         // 設置標準內容與自定義內容
@@ -56,5 +64,11 @@ public class LoginServiceImpl implements LoginService {
                 .setClaims(claims)
                 .signWith(secretKey)
                 .compact();
+    }
+
+    @Override
+    public Map<String, Object> parseToken(String token) {
+        Claims claims = jwtParser.parseClaimsJws(token).getBody();
+        return new HashMap<>(claims);
     }
 }

@@ -9,5 +9,6 @@ import java.util.Map;
 @Service
 public interface LoginService {
     LoginResponse createToken(LoginRequest request);
+    String refreshAccessToken(String refreshToken);
     Map<String, Object> parseToken(String token);
 }

@@ -19,7 +19,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     @Override
-    public AppUserDetails loadUserByUsername(String useremail) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String useremail) throws UsernameNotFoundException {
         UsersEntity usersEntity = usersMapper.findByEmail(useremail);
         if (usersEntity == null) {
             throw new UsernameNotFoundException("User isn't exist: " + useremail);

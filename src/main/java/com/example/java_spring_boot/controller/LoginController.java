@@ -30,4 +30,14 @@ public class LoginController {
         Map<String, Object> jwtPayload = loginService.parseToken(authorization);
         return ResponseEntity.ok(jwtPayload);
     }
+
+    @PostMapping("/refreshAccessToken")
+    public ResponseEntity<Map<String, String>> refreshAccessToken(
+            @RequestBody Map<String, String> request
+    ) {
+        String refreshToken = request.get("refreshToken");
+        String accessToken = loginService.refreshAccessToken(refreshToken);
+        Map<String, String> response = Map.of("accessToken", accessToken);
+        return ResponseEntity.ok(response);
+    }
 }

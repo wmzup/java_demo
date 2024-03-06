@@ -54,10 +54,11 @@ public class SecurityConfig {
     public LoginServiceImpl loginServiceImpl(
             @Value("${security.jwt.key}") String key,
             @Value("${security.access-token-ttl-seconds}") int accessTokenTtlSeconds,
+            @Value("${security.refresh-token-ttl-seconds}") int refreshTokenTtlSeconds,
             AuthenticationProvider authenticationProvider) {
         // key的字串要夠長，不然在製作密鑰時會出現錯誤訊息：The specified key byte array is 240 bits which is not secure enough for any JWT HMAC-SHA algorithm.
         var jwtSecretKey = Keys.hmacShaKeyFor(key.getBytes());
         var jwtParser = Jwts.parserBuilder().setSigningKey(jwtSecretKey).build();
-        return new LoginServiceImpl(jwtSecretKey, accessTokenTtlSeconds, jwtParser, authenticationProvider);
+        return new LoginServiceImpl(jwtSecretKey, accessTokenTtlSeconds, refreshTokenTtlSeconds, jwtParser, authenticationProvider);
     }
 }

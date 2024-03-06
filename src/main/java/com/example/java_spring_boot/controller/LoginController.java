@@ -23,7 +23,7 @@ public class LoginController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("parseToken")
+    @GetMapping("/parseToken")
     public ResponseEntity<Map<String, Object>> parseToken(
             @RequestHeader String authorization
     ) {

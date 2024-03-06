@@ -1,5 +1,6 @@
 package com.example.java_spring_boot.service;
 
+import com.example.java_spring_boot.dto.model.AppUserDetails;
 import com.example.java_spring_boot.dto.request.LoginRequest;
 import com.example.java_spring_boot.dto.response.LoginResponse;
 import io.jsonwebtoken.Claims;
@@ -38,11 +39,17 @@ public class LoginServiceImpl implements LoginService {
         // 執行帳密認證
         authToken = authenticationProvider.authenticate(authToken);
         // 認證成功後取得結果
-        UserDetails userDetails = (UserDetails) authToken.getDetails();
+        AppUserDetails userDetails = (AppUserDetails) authToken.getPrincipal();
         // 產生token
         String accessToken = createAccessToken(userDetails.getUsername());
         LoginResponse response = new LoginResponse();
         response.setAccessToken(accessToken);
+        response.setUserId(userDetails.getId());
+        response.setEmail(userDetails.getUsername());
+        response.setUserAuthority(userDetails.getUserAuthority());
+        response.setPremium(userDetails.getIsPremium());
+        response.setTrailExpiration(userDetails.getTrailExpiration());
+
         return response;
     }
 

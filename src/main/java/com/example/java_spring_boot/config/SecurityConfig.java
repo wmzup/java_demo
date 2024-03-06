@@ -29,12 +29,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(registry ->
-            registry.requestMatchers(HttpMethod.POST, "/users").permitAll()
-                    .requestMatchers(HttpMethod.GET, "/users/?*").hasAnyAuthority("ADMIN", "NORMAL")
+            registry.requestMatchers(HttpMethod.GET, "/users/?*").hasAnyAuthority("ADMIN", "NORMAL")
                     .requestMatchers(HttpMethod.GET, "/users").hasAuthority("ADMIN")
-                    .requestMatchers(HttpMethod.POST, "/login").permitAll()
                     .anyRequest()
-                    .authenticated())
+                    .permitAll())
         .csrf(AbstractHttpConfigurer::disable);
         return http.build();
     }

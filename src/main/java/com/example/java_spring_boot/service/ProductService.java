@@ -2,7 +2,6 @@ package com.example.java_spring_boot.service;
 
 import com.example.java_spring_boot.dto.request.ProductListRequest;
 import com.example.java_spring_boot.dto.request.ProductRequest;
-import com.example.java_spring_boot.dto.response.Product;
 import com.example.java_spring_boot.dto.response.ProductResponse;
 import org.springframework.stereotype.Service;
 

@@ -5,7 +5,7 @@ import com.example.java_spring_boot.enums.UserAuthorityEnum;
 import java.time.LocalDateTime;
 
 public record UserResponse(
-        String id,
+        int id,
         String email,
         String password,
         UserAuthorityEnum authority,

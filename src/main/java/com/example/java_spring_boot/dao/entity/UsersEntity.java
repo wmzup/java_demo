@@ -9,10 +9,13 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class UsersEntity {
-    private String id;
+    private int id;
     private String email;
     private String password;
     private UserAuthorityEnum authority;
+    private boolean enabled;
+    private boolean premium;
+    private LocalDateTime trailExpiration;
     private String createBy;
     private LocalDateTime createDt;
     private String lastModifiedBy;

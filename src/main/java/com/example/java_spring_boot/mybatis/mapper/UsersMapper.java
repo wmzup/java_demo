@@ -51,7 +51,7 @@ public interface UsersMapper {
 
     // insert, update, delete語句是不需要返回值的，它們都是默認返回一個int
     @Insert("""
-            INSERT INTO users (email, password, authority, enabled, premium create_by, create_dt)
+            INSERT INTO users (email, password, authority, enabled, premium, create_by, create_dt)
             VALUES (#{email}, #{password}, #{authority}, #{enabled}, #{premium}, #{createBy}, #{createDt})
             """)
     int insert(UsersEntity users);

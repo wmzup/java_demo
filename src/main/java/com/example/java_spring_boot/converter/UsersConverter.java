@@ -15,6 +15,10 @@ public class UsersConverter {
         entity.setEmail(request.email());
         entity.setPassword(request.password());
         entity.setAuthority(request.authority());
+        entity.setEnabled(true);
+        entity.setPremium(false);
+        entity.setCreateBy("Amanda");
+        entity.setCreateDt(LocalDateTime.now());
         return entity;
     }
 

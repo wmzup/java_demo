@@ -26,10 +26,6 @@ public class UserServiceImpl implements UsersService {
         UsersEntity entity = UsersConverter.toEntity(request);
         String encodePwd = passwordEncoder.encode(entity.getPassword());
         entity.setPassword(encodePwd);
-        entity.setEnabled(true);
-        entity.setPremium(false);
-        entity.setCreateBy("Amanda");
-        entity.setCreateDt(LocalDateTime.now());
         usersMapper.insert(entity);
     }
 

@@ -9,6 +9,10 @@ public record UserRequest(
         @NotNull
         String password,
         @NotNull
-        UserAuthorityEnum authority
+        UserAuthorityEnum authority,
+        @NotNull
+        boolean isEnabled,
+        @NotNull
+        boolean isPremium
 ) {
 }

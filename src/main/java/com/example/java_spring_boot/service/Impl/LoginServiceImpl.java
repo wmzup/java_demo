@@ -1,8 +1,9 @@
-package com.example.java_spring_boot.service;
+package com.example.java_spring_boot.service.Impl;
 
 import com.example.java_spring_boot.dto.model.AppUserDetails;
 import com.example.java_spring_boot.dto.request.LoginRequest;
 import com.example.java_spring_boot.dto.response.LoginResponse;
+import com.example.java_spring_boot.service.LoginService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;

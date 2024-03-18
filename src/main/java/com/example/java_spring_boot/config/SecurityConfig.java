@@ -1,6 +1,6 @@
 package com.example.java_spring_boot.config;
 
-import com.example.java_spring_boot.service.LoginServiceImpl;
+import com.example.java_spring_boot.service.Impl.LoginServiceImpl;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;

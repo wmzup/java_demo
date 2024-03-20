@@ -5,6 +5,7 @@ import com.example.java_spring_boot.dto.response.UserResponse;
 import com.example.java_spring_boot.service.UsersService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -57,11 +58,15 @@ public class UsersController {
     }
 
     @DeleteMapping(value = "/users/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> deleteUser(
+    public ResponseEntity<String> deleteUser(
             @PathVariable
             String id
     ) {
-        usersService.deleteUser(id);
-        return ResponseEntity.noContent().build();
+        String result = usersService.deleteUser(id);
+        if (result.equals("success")) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
     }
 }

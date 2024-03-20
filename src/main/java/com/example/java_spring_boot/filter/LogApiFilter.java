@@ -4,6 +4,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
@@ -11,6 +12,7 @@ import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import java.io.IOException;
 
+@Slf4j
 @Configuration
 public class LogApiFilter extends OncePerRequestFilter {
 
@@ -38,15 +40,15 @@ public class LogApiFilter extends OncePerRequestFilter {
             uri += "?" + params;
         }
 
-        System.out.println(String.join(" ", String.valueOf(httpStatus), httpMethod, uri));
+        log.info("{} {} {}", String.valueOf(httpStatus), httpMethod, uri);
     }
 
     private void logBody(ContentCachingRequestWrapper request, ContentCachingResponseWrapper response) {
         String requestBody = getContent(request.getContentAsByteArray());
-        System.out.println("request: " + requestBody);
+        log.info("request: {}", requestBody);
 
         String responseBody = getContent(response.getContentAsByteArray());
-        System.out.println("response: " + responseBody);
+        log.info("response: {}", responseBody);
     }
 
     private String getContent(byte[] content) {

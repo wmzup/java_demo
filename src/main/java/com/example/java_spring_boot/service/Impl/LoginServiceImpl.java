@@ -7,7 +7,7 @@ import com.example.java_spring_boot.service.LoginService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,7 +27,8 @@ public class LoginServiceImpl implements LoginService {
     private final JwtParser jwtParser;
     private final AuthenticationProvider authenticationProvider;
 
-    public LoginServiceImpl(Key secretKey, int accessTokenTtlSeconds, int refreshTokenTtlSeconds, JwtParser jwtParser, AuthenticationProvider authenticationProvider) {
+    public LoginServiceImpl(Key secretKey, int accessTokenTtlSeconds, int refreshTokenTtlSeconds, JwtParser jwtParser,
+                            AuthenticationProvider authenticationProvider) {
         this.secretKey = secretKey;
         this.accessTokenTtlSeconds = accessTokenTtlSeconds;
         this.refreshTokenTtlSeconds = refreshTokenTtlSeconds;
@@ -74,9 +75,11 @@ public class LoginServiceImpl implements LoginService {
         Claims claims = Jwts.claims();
         claims.setSubject("Access Token");  // 主旨
         claims.setIssuer("Amanda"); // 發行者
-        claims.setIssuedAt(new Date()); // 核發時間amanda
+        claims.setIssuedAt(new Date()); // 核發時間
         claims.setExpiration(new Date(expirationMillis));   // 到期時間
-        claims.put("username", username);   // username作為自定義內容放入JWT，簽名後就產生出來了
+
+        // username作為自定義內容放入JWT，簽名後就產生出來了
+        claims.put("username", username);
 
         // 簽名後產生token
         return Jwts.builder()
@@ -96,7 +99,9 @@ public class LoginServiceImpl implements LoginService {
         claims.setIssuer("Amanda"); // 發行者
         claims.setIssuedAt(new Date()); // 核發時間
         claims.setExpiration(new Date(expirationMillis));   // 到期時間
-        claims.put("username", username);   // username作為自定義內容放入JWT，簽名後就產生出來了
+
+        // 自定義內容放入JWT，簽名後就產生出來了
+        claims.put("username", username);
 
         // 簽名後產生token
         return Jwts.builder()

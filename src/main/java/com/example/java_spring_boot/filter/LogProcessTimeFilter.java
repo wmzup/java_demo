@@ -4,10 +4,12 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+@Slf4j
 public class LogProcessTimeFilter extends OncePerRequestFilter {
 
     @Override
@@ -16,7 +18,6 @@ public class LogProcessTimeFilter extends OncePerRequestFilter {
         long startTime = System.currentTimeMillis();
         filterChain.doFilter(request, response);
         long processTime = System.currentTimeMillis() - startTime;
-
-        System.out.println(processTime + " ms");
+        log.info("processTime: {}", processTime);
     }
 }

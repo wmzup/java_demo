@@ -1,8 +1,10 @@
 package com.example.java_spring_boot.config;
 
+import com.example.java_spring_boot.filter.JwtAuthenticationFilter;
 import com.example.java_spring_boot.service.Impl.LoginServiceImpl;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,42 +14,55 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final UserDetailsService userDetailsService;
 
-    public SecurityConfig(UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,
+                                                   JwtAuthenticationFilter authFilter
+    )throws Exception {
+        return http
+                .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/users").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/users/?*").hasAnyAuthority("ADMIN", "NORNAL")
+                        .requestMatchers(HttpMethod.PATCH, "/users/?*").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/users/?*").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/refreshAccessToken").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/parseToken").permitAll()
+                        .requestMatchers("/error").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
+
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(registry ->
-            registry.requestMatchers(HttpMethod.GET, "/users/?*").hasAnyAuthority("ADMIN", "NORMAL")
-                    .requestMatchers(HttpMethod.GET, "/users").hasAuthority("ADMIN")
-                    .anyRequest()
-                    .permitAll())
-        .csrf(AbstractHttpConfigurer::disable);
-        return http.build();
+    public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder)
+            throws Exception {
+        var provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService);
+        provider.setPasswordEncoder(bCryptPasswordEncoder);
+        return provider;
     }
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService, BCryptPasswordEncoder passwordEncoder) {
-        var provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService);
-        provider.setPasswordEncoder(passwordEncoder);
-        return provider;
     }
 
     @Bean

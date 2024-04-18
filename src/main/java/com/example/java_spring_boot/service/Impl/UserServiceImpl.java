@@ -63,6 +63,11 @@ public class UserServiceImpl implements UsersService {
     @Override
     public void updateUser(String id, UserRequest request) {
         UsersEntity entity = usersMapper.findById(id);
+
+        if (entity == null) {
+            throw new IllegalArgumentException("User not found: " + id);
+        }
+
         String encodePwd = passwordEncoder.encode(request.password());
         entity.setPassword(encodePwd);
         entity.setAuthority(request.authority());

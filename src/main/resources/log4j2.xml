@@ -26,34 +26,35 @@
             <Policies>
                 <!-- 當系統重啟/日期更新/超過100M將覆蓋文件 -->
                 <OnStartupTriggeringPolicy />
-                <SizeBasedTriggeringPolicy size="100 MB" />
+                <SizeBasedTriggeringPolicy size="10 MB" />
                 <TimeBasedTriggeringPolicy />
             </Policies>
         </RollingFile>
 
         <!--輸出 error Log 到檔案，也可以設定將某級別以上的log輸出到另一份檔案中-->
-        <RollingFile name="RollingErrorFile" fileName="${LOG_FILE_PATH}/error.log"
-                     filePattern="${LOG_FILE_PATH}/$${date:yyyyMM}/error-%d{yyyyMMdd}-%i.log.gz">
+<!--        <RollingFile name="RollingErrorFile" fileName="${LOG_FILE_PATH}/error.log"-->
+<!--                     filePattern="${LOG_FILE_PATH}/$${date:yyyyMM}/error-%d{yyyyMMdd}-%i.log.gz">-->
             <!--只輸出 level 及以上級別的信息（onMatch），其他的直接拒絕（onMismatch）-->
-            <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+<!--            <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>-->
 
-            <PatternLayout>
-                <pattern>${PATTERN_FORMAT}</pattern>
-            </PatternLayout>
+<!--            <PatternLayout>-->
+<!--                <pattern>${PATTERN_FORMAT}</pattern>-->
+<!--            </PatternLayout>-->
 
-            <Policies>
-                <OnStartupTriggeringPolicy/>
-                <SizeBasedTriggeringPolicy size="100 MB"/>
-                <TimeBasedTriggeringPolicy/>
-            </Policies>
-        </RollingFile>
+<!--            <Policies>-->
+<!--                <OnStartupTriggeringPolicy/>-->
+<!--                <SizeBasedTriggeringPolicy size="100 MB"/>-->
+<!--                <TimeBasedTriggeringPolicy/>-->
+<!--            </Policies>-->
+<!--        </RollingFile>-->
     </Appenders>
 
     <Loggers>
         <!-- 過濾掉 spring 和 mybatis 的一些無用的 log -->
         <Logger name="org.springframework" level="INFO" />
         <Logger name="org.mybatis" level="INFO" />
-        <Root level="ALL">
+        <!-- 只輸出 info 級別以上的 log -->
+        <Root level="Info">
             <AppenderRef ref="Console" />
             <AppenderRef ref="RollingFile" />
             <AppenderRef ref="RollingErrorFile" />

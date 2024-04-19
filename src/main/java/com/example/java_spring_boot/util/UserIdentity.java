@@ -17,6 +17,12 @@ public class UserIdentity {
                 : (AppUserDetails) principal;
     }
 
+    public boolean isAnonymous() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+        return "anonymousUser".equals(principal);
+    }
+
     public int getId() {
         return getUserDetails().getId();
     }

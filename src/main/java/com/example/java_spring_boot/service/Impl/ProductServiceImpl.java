@@ -1,5 +1,6 @@
 package com.example.java_spring_boot.service.Impl;
 
+import com.example.java_spring_boot.aop.SendEmail;
 import com.example.java_spring_boot.converter.ProductConverter;
 import com.example.java_spring_boot.dao.repository.MockProductDAO;
 import com.example.java_spring_boot.dao.repository.ProductRepository;
@@ -7,6 +8,8 @@ import com.example.java_spring_boot.dto.request.ProductListRequest;
 import com.example.java_spring_boot.dto.request.ProductRequest;
 import com.example.java_spring_boot.dto.response.Product;
 import com.example.java_spring_boot.dto.response.ProductResponse;
+import com.example.java_spring_boot.enums.ActionType;
+import com.example.java_spring_boot.enums.EntityType;
 import com.example.java_spring_boot.service.MailService;
 import com.example.java_spring_boot.service.ProductService;
 import com.example.java_spring_boot.util.exception.NotFoundException;
@@ -35,6 +38,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @SendEmail(entityType = EntityType.PRODUCT, actionType = ActionType.CREATE)
     public ProductResponse createProduct(ProductRequest request) {
         Product product = ProductConverter.toProduct(request);
         Product newProduct = productRepository.insert(product);
@@ -43,6 +47,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @SendEmail(entityType = EntityType.PRODUCT, actionType = ActionType.UPDATE, idParamIdentity = 0)
     public ProductResponse updateProduct(String id, ProductRequest request) {
         Product oldProduct = ProductConverter.toProduct(request);
         Product newProduct = ProductConverter.toProduct(request);
@@ -52,6 +57,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @SendEmail(entityType = EntityType.PRODUCT, actionType = ActionType.DELETE, idParamIdentity = 0)
     public void deleteProductById(String id) {
         productRepository.deleteById(id);
         mailService.sendDeleteProductMail(id);

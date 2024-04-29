@@ -112,7 +112,8 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public Map<String, Object> parseToken(String token) {
-        Claims claims = jwtParser.parseClaimsJws(token).getBody();
+        String accessToken = token.replace("Bearer ", "");
+        Claims claims = jwtParser.parseClaimsJws(accessToken).getBody();
         return new HashMap<>(claims);
     }
 }

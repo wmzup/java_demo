@@ -55,6 +55,7 @@ public class MailServiceImpl implements MailService {
         sendMail("Product Deleted", content, Collections.singletonList(LOG_EMAIL));
     }
 
+    @Override
     public void sendMail(String subject, String content, List<String> receivers) {
         // 實測結果只有outlook會寄信，gmail跟yahoo都沒做事，但也沒噴error。需另外找時間爬文
         SimpleMailMessage message = new SimpleMailMessage();

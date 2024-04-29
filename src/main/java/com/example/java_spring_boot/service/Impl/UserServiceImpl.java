@@ -1,9 +1,12 @@
 package com.example.java_spring_boot.service.Impl;
 
+import com.example.java_spring_boot.aop.SendEmail;
 import com.example.java_spring_boot.converter.UsersConverter;
 import com.example.java_spring_boot.dao.entity.UsersEntity;
 import com.example.java_spring_boot.dto.request.UserRequest;
 import com.example.java_spring_boot.dto.response.UserResponse;
+import com.example.java_spring_boot.enums.ActionType;
+import com.example.java_spring_boot.enums.EntityType;
 import com.example.java_spring_boot.enums.UserAuthorityEnum;
 import com.example.java_spring_boot.mybatis.mapper.UsersMapper;
 import com.example.java_spring_boot.service.UsersService;
@@ -27,6 +30,7 @@ public class UserServiceImpl implements UsersService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
+    @SendEmail(entityType = EntityType.USER, actionType = ActionType.CREATE)
     public void createUser(UserRequest request) {
         UsersEntity entity = UsersConverter.toEntity(request);
         String encodePwd = passwordEncoder.encode(entity.getPassword());
@@ -61,8 +65,14 @@ public class UserServiceImpl implements UsersService {
     }
 
     @Override
+    @SendEmail(entityType = EntityType.USER, actionType = ActionType.UPDATE, idParamIdentity = 0)
     public void updateUser(String id, UserRequest request) {
         UsersEntity entity = usersMapper.findById(id);
+
+        if (entity == null) {
+            throw new IllegalArgumentException("User not found: " + id);
+        }
+
         String encodePwd = passwordEncoder.encode(request.password());
         entity.setPassword(encodePwd);
         entity.setAuthority(request.authority());
@@ -72,6 +82,7 @@ public class UserServiceImpl implements UsersService {
     }
 
     @Override
+    @SendEmail(entityType = EntityType.USER, actionType = ActionType.DELETE, idParamIdentity = 0)
     public String deleteUser(String id) {
         UsersEntity usersEntity = usersMapper.findById(id);
         int userId = usersEntity.getId();

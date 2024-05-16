@@ -1,11 +1,12 @@
 package com.example.java_spring_boot.service.Impl;
 
+import com.example.java_spring_boot.service.IDiscountStrategy;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 
-@Component
-public class FixedPriceDiscountStrategy {
+@Component("fixedPriceDiscountStrategy")
+public class FixedPriceDiscountStrategy implements IDiscountStrategy {
 
     private int fixedPrice;
 

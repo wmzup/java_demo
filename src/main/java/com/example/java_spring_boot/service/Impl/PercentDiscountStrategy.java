@@ -1,11 +1,12 @@
 package com.example.java_spring_boot.service.Impl;
 
+import com.example.java_spring_boot.service.IDiscountStrategy;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 
-@Component
-public class PercentDiscountStrategy {
+@Component("percentDiscountStrategy")
+public class PercentDiscountStrategy implements IDiscountStrategy {
 
     private double discountRate;
 
@@ -19,5 +20,11 @@ public class PercentDiscountStrategy {
                 .limit(prices.length / 2)
                 .sum();
         return (int) Math.round(sumOfLowerPrices * discountRate);
+    }
+
+    @Override
+    public int calcDiscount(int priceA, int priceB) {
+        int minPrice = Math.min(priceA, priceB);
+        return (int) Math.round(minPrice * discountRate);
     }
 }

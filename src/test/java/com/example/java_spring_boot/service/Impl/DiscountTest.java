@@ -11,23 +11,23 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class DiscountTest {
 
     @Autowired
-    private DiscountCalculator discountCalculator;
+    private DiscountCalculator calculator;
 
     @Test
     public void testPercantDiscountCalculator() {
-        IDiscountStrategy discountStrategy = new PercentDiscountStrategy(0.2);
-        DiscountCalculator calculator = new DiscountCalculator(discountStrategy);
+        IDiscountStrategy strategy = new PercentDiscountStrategy();
+        DiscountCalculator calculator = new DiscountCalculator(strategy);
 
         Assert.assertEquals(0, calculator.calcDiscount(30));
         Assert.assertEquals(10, calculator.calcDiscount(60, 50));
         Assert.assertEquals(8, calculator.calcDiscount(40, 55, 50));
-        Assert.assertEquals(18, calculator.calcDiscount(70, 40, 50, 65));
+        Assert.assertEquals(18, calculator.calcDiscount(70, 40, 50, 65)); // (40+50)*0.2
     }
 
     @Test
     public void testFixedPriceDiscountCalculator() {
-        IDiscountStrategy discountStrategy = new FixedPriceDiscountStrategy(10);
-        DiscountCalculator calculator = new DiscountCalculator(discountStrategy);
+        IDiscountStrategy strategy = new FixedPriceDiscountStrategy();
+        DiscountCalculator calculator = new DiscountCalculator(strategy);
 
         Assert.assertEquals(0, calculator.calcDiscount(30));
         Assert.assertEquals(40, calculator.calcDiscount(60, 50));

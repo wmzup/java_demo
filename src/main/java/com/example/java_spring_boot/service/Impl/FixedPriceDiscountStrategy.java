@@ -8,16 +8,14 @@ import java.util.Arrays;
 @Component("fixedPriceDiscountStrategy")
 public class FixedPriceDiscountStrategy implements IDiscountStrategy {
 
-    private int fixedPrice;
+    private int fixedPrice = 10;
 
-    public FixedPriceDiscountStrategy(int fixedPrice) {
-        this.fixedPrice = fixedPrice;
-    }
-
+    @Override
     public int calcDiscount(int priceA, int priceB) {
         return Math.min(priceA, priceB) - fixedPrice;
     }
 
+    @Override
     public int calcDiscount(int...prices) {
         return Arrays.stream(prices)
                 .sorted()

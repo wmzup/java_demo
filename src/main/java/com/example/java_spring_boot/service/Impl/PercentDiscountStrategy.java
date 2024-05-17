@@ -8,12 +8,9 @@ import java.util.Arrays;
 @Component("percentDiscountStrategy")
 public class PercentDiscountStrategy implements IDiscountStrategy {
 
-    private double discountRate;
+    private double discountRate = 0.2;
 
-    public PercentDiscountStrategy(double discountRate) {
-        this.discountRate = discountRate;
-    }
-
+    @Override
     public int calcDiscount(int... prices) {
         int sumOfLowerPrices = Arrays.stream(prices)
                 .sorted()

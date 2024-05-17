@@ -1,6 +1,7 @@
 package com.example.java_spring_boot.service.Impl;
 
 import com.example.java_spring_boot.service.IDiscountStrategy;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -10,7 +11,7 @@ public class DiscountCalculator {
 
     private IDiscountStrategy discountStrategy;
 
-    public DiscountCalculator(IDiscountStrategy discountStrategy) {
+    public DiscountCalculator(@Qualifier("percentDiscountStrategy") IDiscountStrategy discountStrategy) {
         this.discountStrategy = discountStrategy;
     }
 

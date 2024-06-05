@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
+import org.mockito.InOrder;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -19,10 +20,7 @@ import org.springframework.http.HttpHeaders;
 
 import java.util.Optional;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -66,8 +64,9 @@ public class ProductTest {
         productRequest.setCreatorId(123);
         ProductResponse productResponse = productService.createProduct(productRequest);
 
-        verify(userIdentity).getId();
-        verify(productRepository).insert(any(Product.class));
+        InOrder inOrder = inOrder(productRepository, userIdentity);
+        inOrder.verify(userIdentity, times(1)).getId();
+        inOrder.verify(productRepository, times(1)).insert(any(Product.class));
 
         Assert.assertEquals(productRequest.getName(), productResponse.getName());
         Assert.assertEquals(productRequest.getPrice(), productResponse.getPrice());

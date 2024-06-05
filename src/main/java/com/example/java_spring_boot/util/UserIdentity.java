@@ -9,11 +9,14 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class UserIdentity {
+
+    private final AppUserDetails EMPTY_USER = new AppUserDetails(new UsersEntity());
+
     private AppUserDetails getUserDetails() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
         return "anonymousUser".equals(principal)
-                ? new AppUserDetails(new UsersEntity())
+                ? EMPTY_USER
                 : (AppUserDetails) principal;
     }
 

@@ -1,5 +1,6 @@
 package com.example.java_spring_boot.service;
 
+import com.example.java_spring_boot.dao.entity.UsersEntity;
 import com.example.java_spring_boot.dto.request.UserRequest;
 import com.example.java_spring_boot.dto.response.UserResponse;
 import org.springframework.stereotype.Service;
@@ -13,4 +14,5 @@ public interface UsersService {
     UserResponse getUser(String id);
     void updateUser(String id, UserRequest request);
     String deleteUser(String id);
+    UsersEntity getUserByEmail(String email);
 }

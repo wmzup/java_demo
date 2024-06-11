@@ -8,12 +8,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Product {
     private String id;
     private String name;
-    private int price;
+    private Integer price;
+    private Integer creatorId;
 
-    public Product(String id, String name, int price) {
+    public Product(String id, String name, Integer price, Integer creatorId) {
         this.id = id;
         this.name = name;
         this.price = price;
+        this.creatorId = creatorId;
     }
 
     public Product() {

@@ -10,7 +10,11 @@ public class ProductRequest {
 
     @NotEmpty(message = "Product name is undefined.")
     private String name;
+
     @NotNull
     @Min(value = 0, message = "Price should be greater or equal to 0.")
     private Integer price;
+
+    @NotNull(message = "Creator id is undefined.")
+    private Integer creatorId;
 }

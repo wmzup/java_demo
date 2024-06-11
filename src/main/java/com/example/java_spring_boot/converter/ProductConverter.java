@@ -14,6 +14,7 @@ public class ProductConverter {
         Product product = new Product();
         product.setName(request.getName());
         product.setPrice(request.getPrice());
+        product.setCreatorId(request.getCreatorId());
         return product;
     }
 
@@ -22,6 +23,7 @@ public class ProductConverter {
         response.setId(product.getId());
         response.setName(product.getName());
         response.setPrice(product.getPrice());
+        response.setCreatorId(product.getCreatorId());
         return response;
     }
 }

@@ -12,6 +12,7 @@ import com.example.java_spring_boot.enums.ActionType;
 import com.example.java_spring_boot.enums.EntityType;
 import com.example.java_spring_boot.service.MailService;
 import com.example.java_spring_boot.service.ProductService;
+import com.example.java_spring_boot.util.UserIdentity;
 import com.example.java_spring_boot.util.exception.NotFoundException;
 import org.springframework.data.domain.Sort;
 
@@ -20,14 +21,13 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class ProductServiceImpl implements ProductService {
-    private MockProductDAO productDAO;
+//    private MockProductDAO productDAO;
     private ProductRepository productRepository;
-    private MailService mailService;
+    private UserIdentity userIdentity;
 
-    public ProductServiceImpl(ProductRepository productRepository, MockProductDAO productDAO, MailService mailService) {
+    public ProductServiceImpl(ProductRepository productRepository, UserIdentity userIdentity) {
         this.productRepository = productRepository;
-        this.productDAO = productDAO;
-        this.mailService = mailService;
+        this.userIdentity = userIdentity;
     }
 
     @Override
@@ -41,9 +41,9 @@ public class ProductServiceImpl implements ProductService {
     @SendEmail(entityType = EntityType.PRODUCT, actionType = ActionType.CREATE)
     public ProductResponse createProduct(ProductRequest request) {
         Product product = ProductConverter.toProduct(request);
-        Product newProduct = productRepository.insert(product);
-        mailService.sendNewProductMail(newProduct.getId());
-        return ProductConverter.toProductResponse(newProduct);
+        product.setCreatorId(userIdentity.getId());
+        productRepository.insert(product);
+        return ProductConverter.toProductResponse(product);
     }
 
     @Override
@@ -60,7 +60,6 @@ public class ProductServiceImpl implements ProductService {
     @SendEmail(entityType = EntityType.PRODUCT, actionType = ActionType.DELETE, idParamIdentity = 0)
     public void deleteProductById(String id) {
         productRepository.deleteById(id);
-        mailService.sendDeleteProductMail(id);
     }
 
     @Override

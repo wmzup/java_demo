@@ -13,11 +13,11 @@ public class MockProductDAO {
     private final List<Product> productDB = new ArrayList<>();
     @PostConstruct  // class被建立後，自動執行該方法，新增預設的產品資料
     private void initDB() {
-        productDB.add(new Product("B0001", "Android Development (Java)", 380));
-        productDB.add(new Product("B0002", "Android Development (Kotlin)", 420));
-        productDB.add(new Product("B0003", "Data Structure (Java)", 250));
-        productDB.add(new Product("B0004", "Finance Management", 450));
-        productDB.add(new Product("B0005", "Human Resource Management", 330));
+        productDB.add(new Product("B0001", "Android Development (Java)", 380, 1));
+        productDB.add(new Product("B0002", "Android Development (Kotlin)", 420, 1));
+        productDB.add(new Product("B0003", "Data Structure (Java)", 250, 1));
+        productDB.add(new Product("B0004", "Finance Management", 450, 1));
+        productDB.add(new Product("B0005", "Human Resource Management", 330, 1));
     }
 
     public Product insert(Product product) {

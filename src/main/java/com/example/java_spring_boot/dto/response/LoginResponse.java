@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -13,7 +14,7 @@ public class LoginResponse {
     private String refreshToken;
     private int userId;
     private String email;
-    private UserAuthorityEnum userAuthority;
+    private List<UserAuthorityEnum> userAuthority;
     private boolean premium;
     private LocalDateTime trailExpiration;
 }

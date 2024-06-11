@@ -13,7 +13,6 @@ import org.springframework.web.util.ContentCachingResponseWrapper;
 import java.io.IOException;
 
 @Slf4j
-@Configuration
 public class LogApiFilter extends OncePerRequestFilter {
 
 

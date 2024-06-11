@@ -11,6 +11,7 @@ import com.example.java_spring_boot.enums.UserAuthorityEnum;
 import com.example.java_spring_boot.mybatis.mapper.UsersMapper;
 import com.example.java_spring_boot.service.UsersService;
 import com.example.java_spring_boot.util.UserIdentity;
+import com.example.java_spring_boot.util.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -87,15 +88,24 @@ public class UserServiceImpl implements UsersService {
         UsersEntity usersEntity = usersMapper.findById(id);
         int userId = usersEntity.getId();
         String createBy = usersEntity.getCreateBy();
-        UserAuthorityEnum authority = userIdentity.getUserAuthority();
+        List<UserAuthorityEnum> authorityList = userIdentity.getUserAuthority();
 
-        if (userId == userIdentity.getId() ||
-            createBy.equals(userIdentity.getUsername()) ||
-            authority.equals(ADMIN)) {
+        if (userId == userIdentity.getId() || createBy.equals(userIdentity.getUsername()) || authorityList.contains(ADMIN)) {
             usersMapper.delete(id);
             return "success";
         } else {
             return "fail";
         }
+    }
+
+    @Override
+    public UsersEntity getUserByEmail(String email) {
+        UsersEntity usersEntity = usersMapper.findByEmail(email);
+
+        if (usersEntity == null) {
+            throw new NotFoundException("Can't find user.");
+        }
+
+        return usersEntity;
     }
 }

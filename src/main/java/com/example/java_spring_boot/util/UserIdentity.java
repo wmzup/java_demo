@@ -7,6 +7,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class UserIdentity {
 
@@ -34,7 +36,7 @@ public class UserIdentity {
         return getUserDetails().getUsername();
     }
 
-    public UserAuthorityEnum getUserAuthority() {
+    public List<UserAuthorityEnum> getUserAuthority() {
         return getUserDetails().getUserAuthority();
     }
 

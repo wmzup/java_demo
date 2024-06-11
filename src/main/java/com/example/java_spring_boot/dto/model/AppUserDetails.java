@@ -29,7 +29,7 @@ public class AppUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(usersEntity.getAuthority());
+        return usersEntity.getAuthority();
     }
 
     @Override
@@ -42,7 +42,7 @@ public class AppUserDetails implements UserDetails {
         return usersEntity.getId();
     }
 
-    public UserAuthorityEnum getUserAuthority() {
+    public List<UserAuthorityEnum> getUserAuthority() {
         return usersEntity.getAuthority();
     }
 

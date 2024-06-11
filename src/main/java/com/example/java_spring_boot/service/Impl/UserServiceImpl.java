@@ -88,11 +88,9 @@ public class UserServiceImpl implements UsersService {
         UsersEntity usersEntity = usersMapper.findById(id);
         int userId = usersEntity.getId();
         String createBy = usersEntity.getCreateBy();
-        UserAuthorityEnum authority = userIdentity.getUserAuthority();
+        List<UserAuthorityEnum> authorityList = userIdentity.getUserAuthority();
 
-        if (userId == userIdentity.getId() ||
-            createBy.equals(userIdentity.getUsername()) ||
-            authority.equals(ADMIN)) {
+        if (userId == userIdentity.getId() || createBy.equals(userIdentity.getUsername()) || authorityList.contains(ADMIN)) {
             usersMapper.delete(id);
             return "success";
         } else {

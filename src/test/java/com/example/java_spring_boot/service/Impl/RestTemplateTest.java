@@ -1,5 +1,7 @@
 package com.example.java_spring_boot.service.Impl;
 
+import com.example.java_spring_boot.dto.request.CreateUserRequest;
+import com.example.java_spring_boot.dto.request.CreateUserResponse;
 import com.example.java_spring_boot.dto.response.SingleUserResponse;
 import org.junit.Assert;
 import org.junit.Test;
@@ -43,5 +45,21 @@ public class RestTemplateTest {
         Assert.assertEquals("George", data.getFirstName());
         Assert.assertEquals("Bluth", data.getLastName());
         Assert.assertEquals("https://reqres.in/img/faces/1-image.jpg", data.getAvatar());
+    }
+
+    @Test
+    public void testCreateUser() {
+        CreateUserRequest request = CreateUserRequest.of("morpheus", "leader");
+        CreateUserResponse response = restTemplate.postForObject(
+                "https://reqres.in/api/users",
+                request,
+                CreateUserResponse.class
+        );
+
+        assertNotNull(response);
+        Assert.assertEquals(request.getName(), response.getName());
+        Assert.assertEquals(request.getJob(), response.getJob());
+        assertNotNull(response.getId());
+        assertNotNull(response.getCreatedAt());
     }
 }

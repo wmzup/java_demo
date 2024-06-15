@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Map;
 import java.util.Optional;
 
 import static org.bson.assertions.Assertions.assertNotNull;
@@ -24,8 +25,9 @@ public class RestTemplateTest {
     {
         // 發送請求並取得回應
         ResponseEntity<SingleUserResponse> response = restTemplate.getForEntity(
-                "https://reqres.in/api/users/1",
-                SingleUserResponse.class
+                "https://reqres.in/api/users/{id}",
+                SingleUserResponse.class,
+                Map.of("id", 1)
         );
 
         // 確認 HTTP 狀態碼

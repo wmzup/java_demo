@@ -2,6 +2,8 @@ package com.example.java_spring_boot.service.Impl;
 
 import com.example.java_spring_boot.dto.request.CreateUserRequest;
 import com.example.java_spring_boot.dto.request.CreateUserResponse;
+import com.example.java_spring_boot.dto.response.GetUserListResponse;
+import com.example.java_spring_boot.dto.response.SingleUserData;
 import com.example.java_spring_boot.dto.response.SingleUserResponse;
 import org.junit.Assert;
 import org.junit.Test;
@@ -10,8 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.bson.assertions.Assertions.assertNotNull;
 
@@ -41,7 +43,7 @@ public class RestTemplateTest {
         SingleUserResponse responseBody = response.getBody();
         assertNotNull(responseBody);
 
-        SingleUserResponse.SingleUserData data = responseBody.getData();
+        SingleUserData data = responseBody.getData();
         Assert.assertEquals(1, data.getId());
         Assert.assertEquals("george.bluth@reqres.in", data.getEmail());
         Assert.assertEquals("George", data.getFirstName());
@@ -63,5 +65,26 @@ public class RestTemplateTest {
         Assert.assertEquals(request.getJob(), response.getJob());
         assertNotNull(response.getId());
         assertNotNull(response.getCreatedAt());
+    }
+
+    @Test
+    public void testGetUserList() {
+        GetUserListResponse response = restTemplate.getForObject(
+                "https://reqres.in/api/users?page={page}&per_page={per_page}",
+                GetUserListResponse.class,
+                Map.of("page", 2,
+                        "per_page", 6)
+        );
+
+        assertNotNull(response);
+        List<SingleUserData> users = response.getData();
+
+        Assert.assertEquals(6, users.size());
+        Assert.assertEquals(7, users.get(0).getId());
+        Assert.assertEquals(8, users.get(1).getId());
+        Assert.assertEquals(9, users.get(2).getId());
+        Assert.assertEquals(10, users.get(3).getId());
+        Assert.assertEquals(11, users.get(4).getId());
+        Assert.assertEquals(12, users.get(5).getId());
     }
 }

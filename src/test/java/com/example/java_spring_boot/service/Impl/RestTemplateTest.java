@@ -8,7 +8,11 @@ import com.example.java_spring_boot.dto.response.SingleUserResponse;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
@@ -26,7 +30,7 @@ public class RestTemplateTest {
     public void testGetSingleUser()
     {
         // 發送請求並取得回應
-        ResponseEntity<SingleUserResponse> response = restTemplate.getForEntity(
+        org.springframework.http.ResponseEntity<com.example.java_spring_boot.dto.response.SingleUserResponse> response = restTemplate.getForEntity(
                 "https://reqres.in/api/users/{id}",
                 SingleUserResponse.class,
                 Map.of("id", 1)
@@ -86,5 +90,24 @@ public class RestTemplateTest {
         Assert.assertEquals(10, users.get(3).getId());
         Assert.assertEquals(11, users.get(4).getId());
         Assert.assertEquals(12, users.get(5).getId());
+    }
+
+    @Test
+    public void testExchangeCreateUser() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth("your_access_token");
+
+        CreateUserRequest request = CreateUserRequest.of("morpheus", "leader");
+        HttpEntity<CreateUserRequest> httpEntity = new HttpEntity<>(request, headers);
+
+        ResponseEntity<CreateUserResponse> response = restTemplate.exchange(
+                "https://reqres.in/api/users",
+                HttpMethod.POST,
+                httpEntity,
+                CreateUserResponse.class
+        );
+
+        assertNotNull(response);
     }
 }

@@ -14,7 +14,7 @@ public class LoginResponse {
     private String refreshToken;
     private int userId;
     private String email;
-    private List<UserAuthorityEnum> userAuthority;
+    private UserAuthorityEnum userAuthority;
     private boolean premium;
     private LocalDateTime trailExpiration;
 }

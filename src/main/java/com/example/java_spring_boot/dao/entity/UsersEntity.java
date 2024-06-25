@@ -13,7 +13,7 @@ public class UsersEntity {
     private int id;
     private String email;
     private String password;
-    private List<UserAuthorityEnum> authority;
+    private UserAuthorityEnum authority;
     private boolean enabled;
     private boolean premium;
     private LocalDateTime trailExpiration;

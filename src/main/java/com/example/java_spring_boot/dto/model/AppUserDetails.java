@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class AppUserDetails implements UserDetails {
@@ -29,7 +30,7 @@ public class AppUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return usersEntity.getAuthority();
+        return Collections.singleton(usersEntity.getAuthority());
     }
 
     @Override
@@ -42,7 +43,7 @@ public class AppUserDetails implements UserDetails {
         return usersEntity.getId();
     }
 
-    public List<UserAuthorityEnum> getUserAuthority() {
+    public UserAuthorityEnum getUserAuthority() {
         return usersEntity.getAuthority();
     }
 

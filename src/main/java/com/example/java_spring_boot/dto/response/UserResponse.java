@@ -9,7 +9,7 @@ public record UserResponse(
         int id,
         String email,
         String password,
-        List<UserAuthorityEnum> authority,
+        UserAuthorityEnum authority,
         String createBy,
         LocalDateTime createDt,
         String lastModifiedBy,

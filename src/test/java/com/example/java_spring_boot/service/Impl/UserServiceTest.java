@@ -45,7 +45,7 @@ public class UserServiceTest {
         UsersEntity usersEntity = new UsersEntity();
         usersEntity.setId(123);
         usersEntity.setEmail(email);
-        usersEntity.setAuthority(List.of(UserAuthorityEnum.ADMIN));
+        usersEntity.setAuthority(UserAuthorityEnum.ADMIN);
 
         when(usersMapper.findByEmail(email)).thenReturn(usersEntity);
 
@@ -65,9 +65,9 @@ public class UserServiceTest {
     @Test(expected = IllegalArgumentException.class)
     public void testSetAuthorityAsEmptyArray() {
         UsersEntity usersEntity = mock(UsersEntity.class);
-        doThrow(new IllegalArgumentException("Authority is empty")).when(usersEntity).setAuthority(Collections.emptyList());
+        doThrow(new IllegalArgumentException("Authority is empty")).when(usersEntity).setAuthority(null);
 
-        usersEntity.setAuthority(new ArrayList<>());
+        usersEntity.setAuthority(null);
     }
 
     @Test(expected = IllegalArgumentException.class)

@@ -36,7 +36,7 @@ public class UserIdentity {
         return getUserDetails().getUsername();
     }
 
-    public List<UserAuthorityEnum> getUserAuthority() {
+    public UserAuthorityEnum getUserAuthority() {
         return getUserDetails().getUserAuthority();
     }
 

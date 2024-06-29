@@ -1,6 +1,7 @@
-package com.example.java_spring_boot.util;
+package com.example.java_spring_boot.util.CurrencyLayer;
 
 import com.example.java_spring_boot.dto.response.CurrencyLayerResponse;
+import com.example.java_spring_boot.dto.response.ExchangeRateClientResponse;
 import jakarta.annotation.PostConstruct;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Component;
@@ -11,26 +12,22 @@ import java.util.Collection;
 import java.util.Map;
 
 @Component
-public class CurrencyLayerClient {
-
-    private static final String ACCESS_KEY = "065d476ec043ce31ce89ab9d6fbb45bc";
-    private static final int TIMEOUT_SECONDS = 20;
+public class CurrencyLayerClient implements ExchangeRateClient {
 
     private RestTemplate restTemplate;
+    private final String accessKey;
 
-    @PostConstruct
-    public void init() {
-        restTemplate = new RestTemplateBuilder()
-                .rootUri("http://apilayer.net/api")
-                .setConnectTimeout(Duration.ofSeconds(TIMEOUT_SECONDS))
-                .build();
+    public CurrencyLayerClient(RestTemplate restTemplate, String accessKey) {
+        this.restTemplate = restTemplate;
+        this.accessKey = accessKey;
     }
 
-    public CurrencyLayerResponse getLiveExchangeRates(String sourceCurrency, Collection<String> targetCurrencies) {
+    @Override
+    public ExchangeRateClientResponse getLiveExchangeRates(String sourceCurrency, Collection<String> targetCurrencies) {
         Map<String, String> uriVariables = Map.of(
                 "source", sourceCurrency,
                 "currencies", String.join(",", targetCurrencies),
-                "access_key", ACCESS_KEY
+                "access_key", accessKey
         );
 
         return restTemplate.getForObject(

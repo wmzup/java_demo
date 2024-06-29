@@ -1,6 +1,7 @@
-package com.example.java_spring_boot.util;
+package com.example.java_spring_boot.util.ipapi;
 
 import com.example.java_spring_boot.dto.response.IpApiResponse;
+import com.example.java_spring_boot.dto.response.IpInfoClientResponse;
 import jakarta.annotation.PostConstruct;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Component;
@@ -10,21 +11,16 @@ import java.time.Duration;
 import java.util.Map;
 
 @Component
-public class IpApiClient {
-    // 此值可以選擇放在 application.properties，再注入進來
-    private static final int TIMEOUT_SECONDS = 20;
+public class IpApiClient implements IpInfoClient {
 
     private RestTemplate restTemplate;
 
-    @PostConstruct
-    private void init() {
-        restTemplate = new RestTemplateBuilder()
-                .rootUri("https://ipapi.co")
-                .setConnectTimeout(Duration.ofSeconds(TIMEOUT_SECONDS))
-                .build();
+    public IpApiClient(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
-    public IpApiResponse getIpInfo(String ipAddress) {
+    @Override
+    public IpInfoClientResponse getIpInfo(String ipAddress) {
         return restTemplate.getForObject(
                 "/{ip}/json",
                 IpApiResponse.class,

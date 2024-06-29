@@ -3,13 +3,17 @@ package com.example.java_spring_boot.util;
 import com.example.java_spring_boot.dto.request.CreateUserRequest;
 import com.example.java_spring_boot.dto.request.CreateUserResponse;
 import com.example.java_spring_boot.dto.response.CurrencyLayerResponse;
+import com.example.java_spring_boot.dto.response.ExchangeRateClientResponse;
 import com.example.java_spring_boot.dto.response.GetUserListResponse;
-import com.example.java_spring_boot.dto.response.IpApiResponse;
+import com.example.java_spring_boot.dto.response.IpInfoClientResponse;
 import com.example.java_spring_boot.dto.response.SingleUserData;
 import com.example.java_spring_boot.dto.response.SingleUserResponse;
+import com.example.java_spring_boot.util.CurrencyLayer.CurrencyLayerClient;
+import com.example.java_spring_boot.util.ipapi.IpInfoClient;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -36,7 +40,8 @@ public class RestTemplateTest {
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Autowired
-    private IpApiClient ipApiClient;
+    @Qualifier("ipApiClient")
+    private IpInfoClient ipInfoClient;
 
     @Autowired
     CurrencyLayerClient currencyLayerClient;
@@ -128,12 +133,10 @@ public class RestTemplateTest {
 
     @Test
     public void testIpApiClient_public() {
-        IpApiResponse response = ipApiClient.getIpInfo("208.67.222.222");
+        IpInfoClientResponse response = ipInfoClient.getIpInfo("208.67.222.222");
 
         // 確認查詢是否有問題
-        assertFalse(response.isError());
-        assertNull(response.getReason());
-        assertFalse(response.isReserved());
+        assertNull(response.getErrorReason());
 
         // 確認 IP 所在地資訊
         assertEquals("San Francisco", response.getCity());
@@ -141,27 +144,24 @@ public class RestTemplateTest {
         assertEquals(-122.397966, response.getLongitude(), 0);
         assertEquals(37.774778, response.getLatitude(), 0);
         assertEquals("-0700", response.getUtcOffset());
-        assertEquals("+1", response.getCountryCallingCode());
+        assertEquals("+1", response.getCallingCode());
     }
 
     @Test
     public void testIpApiClient_private() {
-        IpApiResponse response = ipApiClient.getIpInfo("192.168.8.100");
-
-        assertTrue(response.isError());
-        assertEquals("Reserved IP Address", response.getReason());
-        assertTrue(response.isReserved());
+        IpInfoClientResponse response = ipInfoClient.getIpInfo("192.168.8.100");
+        assertEquals("Reserved IP Address", response.getErrorReason());
     }
 
     @Test
     public void testCurrencyLayerClient() {
         String sourceCurrency = "USD";
         List targetCurrencies = List.of("TWD", "JPY", "CNY", "EUR");
-        CurrencyLayerResponse response = currencyLayerClient.getLiveExchangeRates(sourceCurrency, targetCurrencies);
+        ExchangeRateClientResponse response = currencyLayerClient.getLiveExchangeRates(sourceCurrency, targetCurrencies);
 
         for (var target : targetCurrencies) {
             String pair = sourceCurrency + target;
-            Double rate = response.getQuotes().get(pair);
+            Double rate = response.getExchangeTable().get(pair);
             assertTrue(rate > 0);
         }
     }

@@ -2,6 +2,7 @@ package com.example.java_spring_boot.util;
 
 import com.example.java_spring_boot.dto.request.CreateUserRequest;
 import com.example.java_spring_boot.dto.request.CreateUserResponse;
+import com.example.java_spring_boot.dto.response.CurrencyLayerResponse;
 import com.example.java_spring_boot.dto.response.GetUserListResponse;
 import com.example.java_spring_boot.dto.response.IpApiResponse;
 import com.example.java_spring_boot.dto.response.SingleUserData;
@@ -36,6 +37,9 @@ public class RestTemplateTest {
 
     @Autowired
     private IpApiClient ipApiClient;
+
+    @Autowired
+    CurrencyLayerClient currencyLayerClient;
 
     @Test
     public void testGetSingleUser()
@@ -147,5 +151,18 @@ public class RestTemplateTest {
         assertTrue(response.isError());
         assertEquals("Reserved IP Address", response.getReason());
         assertTrue(response.isReserved());
+    }
+
+    @Test
+    public void testCurrencyLayerClient() {
+        String sourceCurrency = "USD";
+        List targetCurrencies = List.of("TWD", "JPY", "CNY", "EUR");
+        CurrencyLayerResponse response = currencyLayerClient.getLiveExchangeRates(sourceCurrency, targetCurrencies);
+
+        for (var target : targetCurrencies) {
+            String pair = sourceCurrency + target;
+            Double rate = response.getQuotes().get(pair);
+            assertTrue(rate > 0);
+        }
     }
 }

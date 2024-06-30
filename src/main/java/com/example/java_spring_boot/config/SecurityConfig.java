@@ -1,5 +1,6 @@
 package com.example.java_spring_boot.config;
 
+import com.example.java_spring_boot.enums.UserAuthorityEnum;
 import com.example.java_spring_boot.filter.JwtAuthenticationFilter;
 import com.example.java_spring_boot.service.Impl.LoginServiceImpl;
 import io.jsonwebtoken.Jwts;
@@ -25,35 +26,37 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final UserDetailsService userDetailsService;
+    private static final String[] AUTH_WHITELIST = {
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/webjars/**",
+            "/v3/api-docs/**",
+            "/api/public/**",
+            "/api/public/authenticate",
+            "/actuator/*",
+            "/swagger-ui/**"
+    };
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http,
-                                                   JwtAuthenticationFilter authFilter
-    )throws Exception {
-        return http
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtAuthenticationFilter authFilter) throws Exception {
+        return httpSecurity
                 .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers(HttpMethod.GET, "/users").hasAnyAuthority(UserAuthorityEnum.ADMIN.name())
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/users").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/users/?*").hasAnyAuthority("ADMIN", "NORNAL")
-                        .requestMatchers(HttpMethod.PATCH, "/users/?*").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/users/?*").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/refreshAccessToken").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/parseToken").permitAll()
-                        .requestMatchers("/error").permitAll()
+                        .requestMatchers(AUTH_WHITELIST).permitAll()
                         .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
-
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder)
-            throws Exception {
+    public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder) throws Exception {
         var provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(bCryptPasswordEncoder);

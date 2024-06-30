@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration>
     <Properties>
-        <Property name="APP_NAME">javaspringboot</Property>
+        <Property name="APP_NAME">springboot</Property>
         <Property name="LOG_FILE_PATH">./logs/$${date:yyyy-MM-dd}</Property>
         <!-- 設置 Log 輸出格式 -->
         <Property name="PATTERN_FORMAT">%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%xEx%n</Property>
